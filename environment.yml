@@ -1,0 +1,9 @@
+name: GreenSurge
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - ipykernel
+  - git
+  - pip:
+      - bluemath-tk
