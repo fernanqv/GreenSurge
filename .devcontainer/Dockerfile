@@ -17,8 +17,9 @@ RUN curl -o Miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-L
 # Instalar Jupyter dentro del entorno base de Conda
 #RUN conda install -y -n base jupyter python && \
 #    conda clean -afy
-RUN pwd ; ls -R ; ls -R ..
-RUN conda env create -f environment.yml && \
+
+COPY environment.yml /environment.yml
+RUN conda env create -f /environment.yml && \
     conda clean -afy
 
 # Establecer el usuario por defecto
