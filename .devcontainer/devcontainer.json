@@ -1,0 +1,15 @@
+{
+    "name": "Rocky Linux DevContainer",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+    "extensions": [
+      "ms-python.python",
+      "ms-toolsai.jupyter"
+    ],
+    "remoteUser": "root",
+    "postCreateCommand": "conda init bash"
+  }
