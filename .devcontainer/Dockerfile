@@ -2,8 +2,8 @@
 FROM rockylinux:8
 
 # Instalar dependencias básicas
-RUN dnf install -y wget curl bzip2 && \
-    dnf clean all
+RUN sudo dnf install -y wget curl bzip2 && \
+    sudo dnf clean all
 
 # Definir variables de entorno para Miniconda
 ENV CONDA_DIR=/opt/conda
@@ -17,6 +17,9 @@ RUN curl -o Miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-L
 # Instalar Jupyter dentro del entorno base de Conda
 #RUN conda install -y -n base jupyter python && \
 #    conda clean -afy
+
+RUN conda env create -f environment.yml && \
+    conda clean -afy
 
 # Establecer el usuario por defecto
 USER root
