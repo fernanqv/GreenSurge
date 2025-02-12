@@ -18,9 +18,13 @@ RUN curl -o Miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-L
 #RUN conda install -y -n base jupyter python && \
 #    conda clean -afy
 
-COPY environment.yml /environment.yml
-RUN conda env create -f /environment.yml && \
+#COPY environment.yml /environment.yml
+#RUN conda env create -f /environment.yml && \
     conda clean -afy
 
+COPY environment.yml /tmp/conda-tmp/
+RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then umask 0002 && /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
+    && rm -rf /tmp/conda-tmp
+
 # Establecer el usuario por defecto
-USER root
+#USER root
