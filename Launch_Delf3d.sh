@@ -1,19 +1,23 @@
-#! /bin/bash
+#! /bin/bash 
 
 # Display usage if no arguments are provided
+case_dir="."
+np="1"
+
+# Function to display usage
 usage() {
-    echo "Usage: $0 --case_dir <folder> --local-np <number_of_processes>"
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  --case-dir DIR    Specify the case directory (default: .)"
+    echo "  --local-np NUM    Specify the number of processors (default: 1)"
+    echo "  --help            Display this help message"
     exit 1
 }
-
-# Default variables
-case_dir=""
-np=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --case_dir)
+        --case-dir)
             case_dir="$2"
             shift 2
             ;;
@@ -21,18 +25,15 @@ while [[ $# -gt 0 ]]; do
             np="$2"
             shift 2
             ;;
+        --help)
+            usage
+            ;;
         *)
             echo "Unknown argument: $1"
             usage
             ;;
     esac
 done
-
-# Ensure required arguments are provided
-if [[ -z "$case_dir" || -z "$np" ]]; then
-    echo "Error: Missing one or more required arguments."
-    usage
-fi
 
 # Verify that the directory exists
 if [[ ! -d "$case_dir" ]]; then
@@ -46,22 +47,13 @@ if ! [[ "$np" =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
-# Display the provided values
-echo "Case directory: $case_dir"
-echo "Number of processes: $np"
+if [ -n "$SLURM_CPUS_ON_NODE" ]; then
+    np=$SLURM_CPUS_ON_NODE
+    echo "SLURM_CPUS_ON_NODE: $np"
+fi
 
-# Add your logic here to handle the case and processes
-echo "Running with $np processes in directory $case_dir..."
-
-
-
-
-input_folder=$1
-#input_folder=/software/geocean/conda/envs/Delf3Dpruebas/ejemplos/miri1/input
-
-Delft3d_path=/software/geocean/Delft3D/2024.03/
-PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/opt/delft3dfm_2024.03/lnx64/bin
-
+Delft3d_path=/opt/delft3dfm_2024.03
+PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/lnx64/bin
 
 #I_MPI_ROOT=/software/geocean/Delft3D/2024.03/IntelMPI/mpi/2021.9.0
 #I_MPI_MPIRUN=mpirun
@@ -73,13 +65,13 @@ PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/opt/delft3dfm_202
 ######   NO TOCAR   ######
 ##########################
 
-np=$SLURM_CPUS_ON_NODE
-echo "SLURM_CPUS_ON_NODE: $np"
+
+
 # Specify the folder containing your model's MDU file.
-mdufileFolder=$input_folder
+mdufileFolder=$case_dir
  
 # Specify the folder containing your DIMR configuration file.
-dimrconfigFolder=$input_folder
+dimrconfigFolder=$case_dir
 
  # The name of the DIMR configuration file. The default name is dimr_config.xml. This file must already exist!
 dimrFile=dimr_config.xml
@@ -107,6 +99,7 @@ if [ "$np" -gt 1 ]; then
     cd "$mdufileFolder"
     echo "Partitioning in folder ${PWD}"
     dflowfm --nodisplay --autostartstop --partition:ndomains="$np":icgsolver=6 "$mduFile"
+    cd -
     
 else 
     #--- No partitioning ---
@@ -117,14 +110,16 @@ fi
 #--- Simulation by calling the dimr executable ----------------------------------------------------------------
 echo ""
 echo "Simulation..."
+pwd
 cd $dimrconfigFolder
 echo "Computing in folder ${PWD}"
+cd -
 
 #$containerFolder/execute_singularity_dimr.sh -c $containerFolder -m $modelFolder dimr "$dimrFile"
 mpirun -np $np dimr "$dimrFile"
 
 #--- Join output files by calling the dfmoutput executable ----------------------------------------------------------------
-cd $input_folder/dflowfmoutput
+cd $case_dir/dflowfmoutput
 echo "Joining nc files in folder ${PWD}"
 
 run_dfmoutput.sh -- mapmerge --infile *map.nc
