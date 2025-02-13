@@ -2,7 +2,7 @@
 FROM rockylinux:8
 
 # Instalar dependencias básicas
-RUN dnf install -y wget curl bzip2 gcc && \
+RUN dnf install -y wget curl bzip2 gcc procps-ng && \
     dnf clean all
 
 # Definir variables de entorno para Miniconda
