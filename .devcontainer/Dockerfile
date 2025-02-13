@@ -25,6 +25,9 @@ RUN curl -o Miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-L
 COPY environment.yml /tmp/conda-tmp/
 RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then umask 0002 && /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
     && rm -rf /tmp/conda-tmp
-
-# Establecer el usuario por defecto
-#USER root
+    
+RUN wget -q http://personales.unican.es/fernanqv/delft3dfm_2024.03.tar.gz && \
+    tar -xzvf delft3dfm_2024.03.tar.gz -C /opt/ && \
+    rm delft3dfm_2024.03.tar.gz
+    
+ENV PATH="/opt/delft3dfm_2024.03:/opt/delft3dfm_2024.03/IntelMPI/mpi/latest/bin:/opt/delft3dfm_2024.03/lnx64/bin:/${PATH}"
