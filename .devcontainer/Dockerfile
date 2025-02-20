@@ -33,5 +33,5 @@ RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then umask 0002 && /opt/conda/bi
 RUN /tmp/conda-tmp/DeployIntelCompiler.sh
 RUN /tmp/conda-tmp/DeploySwan.sh
 RUN /tmp/conda-tmp/DeploySwash.sh
-RUN /tmp/conda-tmp/DeployDelft3dfm.sh
+RUN /tmp/conda-tmp/DeployDelft3d.sh
 
