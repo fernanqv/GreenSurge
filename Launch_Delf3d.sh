@@ -52,8 +52,9 @@ if [ -n "$SLURM_CPUS_ON_NODE" ]; then
     echo "SLURM_CPUS_ON_NODE: $np"
 fi
 
-Delft3d_path=/opt/delft3dfm_2024.03
-PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/lnx64/bin
+#Delft3d_path=/opt/delft3dfm_2024.03B
+#PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/lnx64/bin
+#PATH=$PATH:$Delft3d_path/lnx64/bin
 
 #I_MPI_ROOT=/software/geocean/Delft3D/2024.03/IntelMPI/mpi/2021.9.0
 #I_MPI_MPIRUN=mpirun
@@ -61,10 +62,6 @@ PATH=$PATH:$Delft3d_path/IntelMPI/mpi/latest/bin:$Delft3d_path/lnx64/bin
 #I_MPI_HYDRA_BOOTSTRAP=slurm
 #I_MPI_DEBUG=5
 #I_MPI_PMI_LIBRARY=/usr/lib64/slurm/mpi_pmi2.so
-##########################
-######   NO TOCAR   ######
-##########################
-
 
 
 # Specify the folder containing your model's MDU file.
@@ -92,6 +89,7 @@ sed -i "s/\(<process.*>\)[^<>]*\(<\/process.*\)/\1$PROCESSSTR\2/" $dimrconfigFol
 mduFile="$(sed -n 's/\r//; s/<inputFile>\(.*\).mdu<\/inputFile>/\1/p' $dimrconfigFolder/$dimrFile)".mdu
 
 
+
 #--- Partition by calling the dflowfm executable -------------------------------------------------------------
 if [ "$np" -gt 1 ]; then 
     echo ""
@@ -110,17 +108,20 @@ fi
 #--- Simulation by calling the dimr executable ----------------------------------------------------------------
 echo ""
 echo "Simulation..."
-pwd
 cd $dimrconfigFolder
 echo "Computing in folder ${PWD}"
-cd -
 
 #$containerFolder/execute_singularity_dimr.sh -c $containerFolder -m $modelFolder dimr "$dimrFile"
 mpirun -np $np dimr "$dimrFile"
+cd -
 
 #--- Join output files by calling the dfmoutput executable ----------------------------------------------------------------
-cd $case_dir/dflowfmoutput
-echo "Joining nc files in folder ${PWD}"
+if [ "$np" -gt 1 ]; then 
+    cd $case_dir/output
+    echo "Joining nc files in folder ${PWD}"
+    run_dfmoutput.sh -- mapmerge --infile *map.nc
+    cd -
+fi
 
-run_dfmoutput.sh -- mapmerge --infile *map.nc
+
 
