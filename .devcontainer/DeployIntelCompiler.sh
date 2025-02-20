@@ -17,4 +17,10 @@ dnf install -y intel-oneapi-compiler-fortran
 dnf install -y intel-oneapi-mkl # TODO. Check if it is necessary
 dnf install -y intel-oneapi-mpi
 
+# Last versions of Intel compiler have different names
+# Create links to the old names
+ln -s /opt/intel/oneapi/compiler/2025.0/bin/ifx /opt/intel/oneapi/compiler/2025.0/bin/ifort
+ln -s /opt/intel/oneapi/compiler/2025.0/bin/icx /opt/intel/oneapi/compiler/2025.0/bin/icc
+ln -s /opt/intel/oneapi/mpi/2021.14/bin/mpiifx /opt/intel/oneapi/mpi/2021.14/bin/mpiifort
+
 source /opt/intel/oneapi/setvars.sh
