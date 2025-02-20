@@ -14,5 +14,7 @@ mv /tmp/oneAPI.repo /etc/yum.repos.d
 # Install Intel oneapi compilers, mkl and mpi
 dnf install -y intel-oneapi-compiler-dpcpp-cpp 
 dnf install -y intel-oneapi-compiler-fortran
-dnf install -y intel-oneapi-mkl
+dnf install -y intel-oneapi-mkl # TODO. Check if it is necessary
 dnf install -y intel-oneapi-mpi
+
+source /opt/intel/oneapi/setvars.sh
