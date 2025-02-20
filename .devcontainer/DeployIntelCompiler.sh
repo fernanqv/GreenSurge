@@ -16,6 +16,7 @@ dnf install -y intel-oneapi-compiler-dpcpp-cpp
 dnf install -y intel-oneapi-compiler-fortran
 dnf install -y intel-oneapi-mkl # TODO. Check if it is necessary
 dnf install -y intel-oneapi-mpi
+dnf install -y intel-oneapi-mpi-devel
 
 # Last versions of Intel compiler have different names
 # Create links to the old names
