@@ -30,6 +30,7 @@ RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then umask 0002 && /opt/conda/bi
 #    rm delft3dfm_2024.03.tar.gz
     
 #ENV PATH="/opt/delft3dfm_2024.03:/opt/delft3dfm_2024.03/IntelMPI/mpi/latest/bin:/opt/delft3dfm_2024.03/lnx64/bin:/${PATH}"
+RUN chmod +x /tmp/conda-tmp/*.sh
 RUN /tmp/conda-tmp/DeployIntelCompiler.sh
 RUN /tmp/conda-tmp/DeploySwan.sh
 RUN /tmp/conda-tmp/DeploySwash.sh
